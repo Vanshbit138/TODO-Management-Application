@@ -13,7 +13,7 @@ from contextlib import asynccontextmanager
 
 from ..core.config import settings
 from ..core.database import create_tables
-from .routers import auth
+from .routers import auth, tasks
 
 
 @asynccontextmanager
@@ -65,6 +65,7 @@ async def health_check():
 
 # Include routers
 app.include_router(auth.router, prefix=settings.api_v1_str)
+app.include_router(tasks.router, prefix=settings.api_v1_str)
 
 
 # Root endpoint
