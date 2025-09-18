@@ -28,43 +28,51 @@ src/
       task_service.py       # Task business rules
 ```
 
-## Folder Purposes and Allowed Content
 
-- core/
-  - Purpose: Application composition and cross-cutting concerns
-  - Keep: configuration objects, DI container, DB setup, base classes, security utils
-  - Avoid: business rules, API route code, ORM entity definitions
+---
 
-- api/
-  - Purpose: HTTP layer exposing endpoints and request/response boundaries
-  - Keep: FastAPI app, routers, dependency wiring, request/response models (if lightweight)
-  - Avoid: persistence queries, heavy business logic
+## Folder Purposes
 
-- models/
-  - Purpose: Database entities and ORM mapping
-  - Keep: SQLAlchemy models, table metadata, relationship declarations
-  - Avoid: request/response schemas, I/O code, business workflows
+### `core/`
+- **Purpose:** Application composition and cross-cutting concerns
+- **Keep:** configuration objects, DI container, DB setup, base classes, security utils
+- **Avoid:** business rules, API route code, ORM entity definitions
 
-- repositories/
-  - Purpose: Data access abstractions and implementations
-  - Keep: CRUD operations, query methods, transaction boundaries
-  - Avoid: HTTP specifics, business rules not related to persistence
+### `api/`
+- **Purpose:** HTTP layer exposing endpoints and request/response boundaries
+- **Keep:** FastAPI app, routers, request/response schemas (DTOs)
+- **Avoid:** persistence queries, heavy business logic
 
-- services/
-  - Purpose: Orchestrate business use-cases independent of transport and persistence
-  - Keep: domain logic, validation rules, interactions across repositories
-  - Avoid: direct SQL, HTTP request parsing, framework-specific code
+### `models/`
+- **Purpose:** Database entities and ORM mapping
+- **Keep:** SQLAlchemy models, table metadata, relationship declarations
+- **Avoid:** request/response schemas, I/O code, business workflows
 
-- tests/
-  - Purpose: Test suites per layer (unit/integration)
-  - Keep: fixtures, unit tests, API tests, repository tests
+### `repositories/`
+- **Purpose:** Data access abstractions and implementations
+- **Keep:** CRUD operations, query methods, transaction boundaries
+- **Avoid:** HTTP specifics, unrelated business logic
+
+### `services/`
+- **Purpose:** Orchestrate business use-cases independent of transport and persistence
+- **Keep:** domain logic, validation rules, orchestration across repositories
+- **Avoid:** direct SQL, HTTP request parsing, framework-specific code
+
+### `tests/`
+- **Purpose:** Ensure code correctness and regression prevention
+- **Keep:** fixtures, unit tests, API tests, repository tests
+- **Avoid:** production-only code
+
+---
 
 ## Import Direction (Dependency Rule)
-- api → services → repositories → models
-- core is imported by all layers but must not import from api/services/repositories/models to avoid cycles
+- **api → services → repositories → models**
+- `core` is used by all layers but must not depend on other layers
 
-## Naming and Conventions
-- Modules are nouns (models, repositories), services are verbs/verb-phrases
-- Keep functions small, prefer dependency injection, avoid global state
-- Raise and handle errors at appropriate layer boundaries
+---
 
+## Naming Conventions
+- Modules: nouns (`models`, `repositories`)
+- Services: verbs/verb-phrases (`task_service`)
+- Functions: small, composable
+- Errors: raised and handled at layer boundaries
