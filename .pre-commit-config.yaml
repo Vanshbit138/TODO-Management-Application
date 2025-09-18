@@ -1,0 +1,21 @@
+repos:
+-   repo: https://github.com/psf/black
+    rev: '25.1.0'  # Points to the latest commit on the main branch
+    hooks:
+    -   id: black
+        args: ["-l", "120"]
+
+-   repo: https://github.com/pycqa/isort
+    rev: '6.0.1'  # Points to the latest commit on the main branch
+    hooks:
+    -   id: isort
+        args: ["--profile", "black"]
+        exclude: ^services/db_management/migrations/versions/
+
+-   repo: https://github.com/PyCQA/flake8
+    rev: '7.2.0'  # Points to the latest commit on the main branch
+    hooks:
+    -   id: flake8
+        args: ["--ignore=E203,E501,E701,W503,W605", "--max-line-length=100"]
+
+
