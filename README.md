@@ -1,23 +1,26 @@
-# TO-DO Management Application
+# TODO Management Application
 
-This repository contains the backend implementation for the TODO Management Application.  
-It follows a structured **documentation-first approach** to ensure clarity and alignment before coding.
+This repository contains a backend service built with FastAPI, structured using a layered architecture to enable clean separation of concerns and scalability.
 
-## 📖 Documentation
+## Step 2 Overview
+Step 2 introduces the initial project structure only (no business logic yet). We scaffold the following layers under `src/`:
 
-The project documentation has been split into structured sections inside the `docs/` folder:
+- `api/`: FastAPI application and HTTP route handlers
+- `core/`: configuration, dependency injection container, database setup, base interfaces
+- `models/`: SQLAlchemy ORM entities
+- `repositories/`: data access layer (CRUD/query operations)
+- `services/`: business logic (authentication, task management)
 
-1. [Planning](docs/1_planning.md)  
-2. [Design (Technology Stack)](docs/2_design.md)  
-3. [User Stories & Acceptance Criteria](docs/3_user_stories.md)  
-4. [API Endpoints Overview](docs/4_api_end_points_overview.md)  
-5. [Database Schema](docs/5_database_schema.md)  
-6. [Architecture & Workflow](docs/6_architecture.md)  
+Refer to the Step 2 docs:
+- `step2/1_project_setup.md`
+- `step2/2_aiqa_workflows.md`
+- `step2/3_project_structure.md`
+- `step2/4_data_modeling.md`
 
-## 🚀 Roadmap
-- Step 1: Documentation approval 
-- Step 2: Repo setup & docs migration   
-- Step 3: Implementation (auth, tasks, tests)  
-- Release: QA, deployment  
+## Getting Started (after implementation phases)
+1. Create a virtual environment with Python 3.12+
+2. `pip install -r requirements/requirements.txt -r dev_requirements.txt`
+3. Copy `env.example` to `.env` and set values
+4. Run: `uvicorn src.api.main:app --reload`
 
----
+Note: At Step 2, modules contain only docstrings to describe responsibilities. Implementation happens in later steps.
