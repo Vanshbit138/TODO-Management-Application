@@ -1,5 +1,5 @@
 """
-Main FastAPI application entry point.
+FastAPI application entry point.
 
 This module initializes the FastAPI application, configures middleware,
 registers route blueprints, and sets up the application lifecycle.

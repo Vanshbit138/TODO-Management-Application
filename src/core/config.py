@@ -1,5 +1,5 @@
 """
-Configuration management module.
+Application settings module.
 
 This module handles all application configuration including environment variables,
 database settings, JWT secrets, and other application-wide settings.
