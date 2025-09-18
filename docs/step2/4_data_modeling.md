@@ -24,4 +24,3 @@ Full ORM models and Alembic migrations will be added in Step 3.
 - `users.id → tasks.owner_id` (FK with ON DELETE CASCADE)
 
 ---
-
