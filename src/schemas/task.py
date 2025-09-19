@@ -6,8 +6,8 @@ It includes schemas for task creation, updates, and responses.
 """
 
 from typing import Optional
-from datetime import datetime
-from pydantic import BaseModel, Field, validator
+from datetime import datetime, timezone
+from pydantic import BaseModel, Field, field_validator
 
 from ..models.task import TaskStatus
 
@@ -19,25 +19,37 @@ class TaskCreate(BaseModel):
     description: Optional[str] = Field(None, max_length=1000, description="Task description")
     due_date: Optional[datetime] = Field(None, description="Task due date")
     
-    @validator('title')
+    @field_validator('title')
+    @classmethod
     def validate_title(cls, v):
         """Validate task title."""
         if not v or not v.strip():
             raise ValueError('Task title cannot be empty')
         return v.strip()
     
-    @validator('description')
+    @field_validator('description')
+    @classmethod
     def validate_description(cls, v):
         """Validate task description."""
         if v is not None:
             return v.strip() if v else None
         return v
     
-    @validator('due_date')
+    @field_validator('due_date')
+    @classmethod
     def validate_due_date(cls, v):
         """Validate due date."""
-        if v and v < datetime.utcnow():
-            raise ValueError('Due date cannot be in the past')
+        if v:
+            # Get current time in UTC with timezone awareness
+            now = datetime.now(timezone.utc)
+            
+            # If the input datetime is timezone-naive, assume it's UTC
+            if v.tzinfo is None:
+                v = v.replace(tzinfo=timezone.utc)
+            
+            # Compare timezone-aware datetimes
+            if v < now:
+                raise ValueError('Due date cannot be in the past')
         return v
 
 
@@ -49,7 +61,8 @@ class TaskUpdate(BaseModel):
     status: Optional[TaskStatus] = Field(None, description="Task status")
     due_date: Optional[datetime] = Field(None, description="Task due date")
     
-    @validator('title')
+    @field_validator('title')
+    @classmethod
     def validate_title(cls, v):
         """Validate task title."""
         if v is not None:
@@ -58,18 +71,29 @@ class TaskUpdate(BaseModel):
             return v.strip()
         return v
     
-    @validator('description')
+    @field_validator('description')
+    @classmethod
     def validate_description(cls, v):
         """Validate task description."""
         if v is not None:
             return v.strip() if v else None
         return v
     
-    @validator('due_date')
+    @field_validator('due_date')
+    @classmethod
     def validate_due_date(cls, v):
         """Validate due date."""
-        if v and v < datetime.utcnow():
-            raise ValueError('Due date cannot be in the past')
+        if v:
+            # Get current time in UTC with timezone awareness
+            now = datetime.now(timezone.utc)
+            
+            # If the input datetime is timezone-naive, assume it's UTC
+            if v.tzinfo is None:
+                v = v.replace(tzinfo=timezone.utc)
+            
+            # Compare timezone-aware datetimes
+            if v < now:
+                raise ValueError('Due date cannot be in the past')
         return v
 
 
@@ -106,7 +130,8 @@ class TaskSearch(BaseModel):
     skip: int = Field(default=0, ge=0, description="Number of records to skip")
     limit: int = Field(default=100, ge=1, le=1000, description="Maximum number of records to return")
     
-    @validator('search_term')
+    @field_validator('search_term')
+    @classmethod
     def validate_search_term(cls, v):
         """Validate search term."""
         if not v or not v.strip():

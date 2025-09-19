@@ -6,7 +6,7 @@ It includes schemas for user registration, login, and token management.
 """
 
 from typing import Optional
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from pydantic import EmailStr
 
 
@@ -18,14 +18,16 @@ class UserRegistration(BaseModel):
     password: str = Field(..., min_length=8, max_length=128, description="User password")
     full_name: Optional[str] = Field(None, max_length=255, description="Full name")
     
-    @validator('username')
+    @field_validator('username')
+    @classmethod
     def validate_username(cls, v):
         """Validate username format."""
         if not v.isalnum():
             raise ValueError('Username must contain only alphanumeric characters')
         return v
     
-    @validator('password')
+    @field_validator('password')
+    @classmethod
     def validate_password(cls, v):
         """Validate password strength."""
         if len(v) < 8:
@@ -87,7 +89,8 @@ class PasswordChange(BaseModel):
     current_password: str = Field(..., description="Current password")
     new_password: str = Field(..., min_length=8, max_length=128, description="New password")
     
-    @validator('new_password')
+    @field_validator('new_password')
+    @classmethod
     def validate_new_password(cls, v):
         """Validate new password strength."""
         if len(v) < 8:

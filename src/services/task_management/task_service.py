@@ -8,7 +8,7 @@ task validation, and task management functionality.
 from typing import Optional, Dict, Any, List
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
-from datetime import datetime
+from datetime import datetime, timezone
 
 from ...models.task import Task, TaskStatus
 from ...repositories.task_repository import TaskRepository
@@ -64,12 +64,21 @@ class TaskService:
                 detail="Task description must be less than 1000 characters"
             )
         
-        # Validate due date
-        if due_date and due_date < datetime.utcnow():
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Due date cannot be in the past"
-            )
+        # Validate due date with proper timezone handling
+        if due_date:
+            # Get current time in UTC with timezone awareness
+            now = datetime.now(timezone.utc)
+            
+            # If the input datetime is timezone-naive, assume it's UTC
+            if due_date.tzinfo is None:
+                due_date = due_date.replace(tzinfo=timezone.utc)
+            
+            # Compare timezone-aware datetimes
+            if due_date < now:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Due date cannot be in the past"
+                )
         
         # Create task data
         task_data = {
@@ -168,11 +177,20 @@ class TaskService:
             )
         
         # Validate due date if provided
-        if due_date and due_date < datetime.utcnow():
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Due date cannot be in the past"
-            )
+        if due_date:
+            # Get current time in UTC with timezone awareness
+            now = datetime.now(timezone.utc)
+            
+            # If the input datetime is timezone-naive, assume it's UTC
+            if due_date.tzinfo is None:
+                due_date = due_date.replace(tzinfo=timezone.utc)
+            
+            # Compare timezone-aware datetimes
+            if due_date < now:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Due date cannot be in the past"
+                )
         
         # Prepare update data
         update_data = {}
